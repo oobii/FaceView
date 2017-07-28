@@ -11,7 +11,8 @@ import UIKit
 // MARK: Model
 
 class FaceViewController: UIViewController {
-    var expression = FacialExpression(eyes: .Squinting, eyeBrows: .Relaxed, mouth: .Grin) {
+    
+    var expression = FacialExpression(eyes: .squinting, eyeBrows: .relaxed, mouth: .grin) {
         didSet {
             updateUI()
         }
@@ -26,17 +27,17 @@ class FaceViewController: UIViewController {
             
             // Here we added these gesture recognisers in code and can also add them in Story Board
             faceView.addGestureRecognizer(UIPinchGestureRecognizer(target: faceView,
-                action: #selector(FaceView.changeScale(_:))
-                ))
+                                                                   action: #selector(FaceView.changeScale(_:))
+            ))
             let happieSwipeGestureRecognizer = UISwipeGestureRecognizer(target: self,
                                                                         action: #selector(FaceViewController.increaseHappiness))
-            happieSwipeGestureRecognizer.direction = .Up
+            happieSwipeGestureRecognizer.direction = .up
             faceView.addGestureRecognizer(happieSwipeGestureRecognizer)
             
             
             let sadderSwipeGestureRecognizer = UISwipeGestureRecognizer(target: self,
                                                                         action: #selector(FaceViewController.decreaseHappiness))
-            sadderSwipeGestureRecognizer.direction = .Down
+            sadderSwipeGestureRecognizer.direction = .down
             faceView.addGestureRecognizer(sadderSwipeGestureRecognizer)
             
             // We aupdate our UI when this thing is first set
@@ -46,12 +47,12 @@ class FaceViewController: UIViewController {
     }
     
     // rename this method vin StoryBoard editor, it was done as a test with namr t
-    @IBAction func t(recognizer: UITapGestureRecognizer) {
-        if recognizer.state == .Ended {
+    @IBAction func t(_ recognizer: UITapGestureRecognizer) {
+        if recognizer.state == .ended {
             switch expression.eyes {
-            case .Open: expression.eyes = .Closed
-            case .Closed: expression.eyes = .Open
-            case .Squinting: expression.eyes = .Closed
+            case .open: expression.eyes = .closed
+            case .closed: expression.eyes = .open
+            case .squinting: expression.eyes = .closed
             }
         }
     }
@@ -65,18 +66,18 @@ class FaceViewController: UIViewController {
         expression.mouth = expression.mouth.sadderMouth()
     }
     
-    private var mouthCurvatures = [FacialExpression.Mouth.Frown:-1.0, .Grin:0.5,.Smile:1.0,.Smirk:-0.5,.Neutral:0.0]
-    private var eyeBrowTilts = [FacialExpression.EyeBrows.Relaxed:0.5,.Furrowed:-0.5,.Normal:0.0]
+    fileprivate var mouthCurvatures = [FacialExpression.Mouth.frown:-1.0, .grin:0.5,.smile:1.0,.smirk:-0.5,.neutral:0.0]
+    fileprivate var eyeBrowTilts = [FacialExpression.EyeBrows.relaxed:0.5,.furrowed:-0.5,.normal:0.0]
     
     
     // Our updateUI take things from our model
-    private func updateUI(){
+    fileprivate func updateUI(){
         if faceView != nil {
             switch expression.eyes {
-            case .Open: faceView.eyesOpen = true
-            case .Closed:faceView.eyesOpen = false
+            case .open: faceView.eyesOpen = true
+            case .closed:faceView.eyesOpen = false
             // we dont have Squinting
-            case .Squinting: faceView.eyesOpen = false
+            case .squinting: faceView.eyesOpen = false
             }
             
             // turn the things in the view

@@ -10,15 +10,15 @@ import UIKit
 
 class EmotionsViewController: UIViewController {
     
-    private var emotions: Dictionary<String,FacialExpression> = [
-        "angry":FacialExpression(eyes: .Squinting, eyeBrows: .Furrowed, mouth: .Frown),
-        "happy":FacialExpression(eyes: .Open, eyeBrows: .Relaxed, mouth: .Smile),
-        "worried":FacialExpression(eyes: .Squinting, eyeBrows: .Normal, mouth: .Smirk),
-        "mischievious":FacialExpression(eyes: .Squinting, eyeBrows: .Relaxed, mouth: .Grin)]
+    fileprivate var emotions: Dictionary<String,FacialExpression> = [
+        "angry":FacialExpression(eyes: .squinting, eyeBrows: .furrowed, mouth: .frown),
+        "happy":FacialExpression(eyes: .open, eyeBrows: .relaxed, mouth: .smile),
+        "worried":FacialExpression(eyes: .squinting, eyeBrows: .normal, mouth: .smirk),
+        "mischievious":FacialExpression(eyes: .squinting, eyeBrows: .relaxed, mouth: .grin)]
     
     // MARK: - Navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        var destinationvc = segue.destinationViewController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        var destinationvc = segue.destination
         
         // if we are in Navigation Controller , we want to look inside to prepare the
         // MVC which is inside

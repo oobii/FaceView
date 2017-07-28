@@ -20,13 +20,13 @@ class FaceView: UIView {
     @IBInspectable
     var eyeBrowTilt: Double = 0.5 { didSet { setNeedsDisplay() } } // -1 full furrow, 1 fully relaxed
     @IBInspectable
-    var color: UIColor = UIColor.blueColor() { didSet { setNeedsDisplay() } }
+    var color: UIColor = UIColor.blue { didSet { setNeedsDisplay() } }
     @IBInspectable
     var lineWidth: CGFloat = 5.0 { didSet { setNeedsDisplay() } }
     
-    func changeScale(recogniser: UIPinchGestureRecognizer) {
+    func changeScale(_ recogniser: UIPinchGestureRecognizer) {
         switch recogniser.state {
-        case .Changed, .Ended:
+        case .changed, .ended:
             scale *= recogniser.scale
             recogniser.scale = 1.0
         default:
@@ -36,20 +36,20 @@ class FaceView: UIView {
     }
     
     // we are using computed vars becaue we need to use bound which is FaceView own property, inhereted from UIView
-    private var faceRadius: CGFloat {
+    fileprivate var faceRadius: CGFloat {
         get {
             return min(bounds.size.width, bounds.size.height) / 2 * scale
         }
     }
     
     // we can actually skip the "get"
-    private var faceCenter: CGPoint {
+    fileprivate var faceCenter: CGPoint {
         return CGPoint(x: bounds.midX, y: bounds.midY)
     }
     
     
     // In Swift we do constants with struct
-    private struct Ratios {
+    fileprivate struct Ratios {
         static let FaceRadiusToEyeOffset: CGFloat = 3
         static let FaceRadiusToEyeRadius: CGFloat = 10
         static let FaceRadiusToMouthWidth: CGFloat = 1
@@ -61,12 +61,12 @@ class FaceView: UIView {
     
     // We create a new Type
     enum Eye {
-        case Left
-        case Right
+        case left
+        case right
     }
     
     // notice external and internal name for the second var
-    private func pathForCircleCenteredAtPoint(midPoint: CGPoint, withRadius radius: CGFloat) -> UIBezierPath {
+    fileprivate func pathForCircleCenteredAtPoint(_ midPoint: CGPoint, withRadius radius: CGFloat) -> UIBezierPath {
         
         let path = UIBezierPath(arcCenter: midPoint, radius: radius, startAngle: 0.0, endAngle: 2*CGFloat(M_PI), clockwise: true)
         path.lineWidth = lineWidth
@@ -74,21 +74,21 @@ class FaceView: UIView {
     }
     
     
-    private func getEyeCenter(eye: Eye) -> CGPoint {
+    fileprivate func getEyeCenter(_ eye: Eye) -> CGPoint {
         let eyeOffset = faceRadius/Ratios.FaceRadiusToEyeOffset
         var eyeCenter = faceCenter
         eyeCenter.y -= eyeOffset
         
         switch eye {
-        case .Left: eyeCenter.x -= eyeOffset
-        case .Right: eyeCenter.x += eyeOffset
+        case .left: eyeCenter.x -= eyeOffset
+        case .right: eyeCenter.x += eyeOffset
         }
         
         return eyeCenter
         
     }
     
-    private func pathForEye(eye: Eye) -> UIBezierPath {
+    fileprivate func pathForEye(_ eye: Eye) -> UIBezierPath {
         
         let eyeRadius = faceRadius / Ratios.FaceRadiusToEyeRadius
         let eyeCenter = getEyeCenter(eye)
@@ -102,8 +102,8 @@ class FaceView: UIView {
         else {
             
             path = UIBezierPath()
-            path.moveToPoint(CGPoint(x: eyeCenter.x - eyeRadius, y: eyeCenter.y))
-            path.addLineToPoint(CGPoint(x: eyeCenter.x + eyeRadius, y: eyeCenter.y))
+            path.move(to: CGPoint(x: eyeCenter.x - eyeRadius, y: eyeCenter.y))
+            path.addLine(to: CGPoint(x: eyeCenter.x + eyeRadius, y: eyeCenter.y))
             path.lineWidth = lineWidth
             return path
             
@@ -111,7 +111,7 @@ class FaceView: UIView {
         }
     }
     
-    private func pathForMouth() -> UIBezierPath {
+    fileprivate func pathForMouth() -> UIBezierPath {
         let mouthWidth = faceRadius/Ratios.FaceRadiusToMouthWidth
         let mouthHeight = faceRadius/Ratios.FaceRadiusToMouthHeight
         let mouthOffset = faceRadius/Ratios.FaceRadiusToMouthOffset
@@ -124,19 +124,19 @@ class FaceView: UIView {
         let cp2 = CGPoint(x: mouthRect.maxX - mouthRect.width/3, y: mouthRect.minY + smileOffset)
         
         let path = UIBezierPath()
-        path.moveToPoint(start)
-        path.addCurveToPoint(end, controlPoint1: cp1, controlPoint2: cp2)
+        path.move(to: start)
+        path.addCurve(to: end, controlPoint1: cp1, controlPoint2: cp2)
         path.lineWidth = lineWidth
         
         return path
     }
     
-    private func pathForBrow(eye: Eye) -> UIBezierPath
+    fileprivate func pathForBrow(_ eye: Eye) -> UIBezierPath
     {
         var tilt = eyeBrowTilt
         switch eye {
-        case .Left: tilt *= -1.0
-        case .Right: break
+        case .left: tilt *= -1.0
+        case .right: break
         }
         var browCenter = getEyeCenter(eye)
         browCenter.y -= faceRadius / Ratios.FaceRadiusToBrowOffset
@@ -146,21 +146,21 @@ class FaceView: UIView {
         let browEnd = CGPoint(x: browCenter.x + eyeRadius, y: browCenter.y + tiltOffset)
 
         let path = UIBezierPath()
-        path.moveToPoint(browStart)
-        path.addLineToPoint(browEnd)
+        path.move(to: browStart)
+        path.addLine(to: browEnd)
         path.lineWidth = lineWidth
         return path
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         // Drawing code
-        UIColor.blueColor().set()
+        UIColor.blue.set()
         pathForCircleCenteredAtPoint(faceCenter, withRadius: faceRadius).stroke()
-        pathForEye(.Left).stroke()
-        pathForEye(.Right).stroke()
+        pathForEye(.left).stroke()
+        pathForEye(.right).stroke()
         pathForMouth().stroke()
-        pathForBrow(.Left).stroke()
-        pathForBrow(.Right).stroke()
+        pathForBrow(.left).stroke()
+        pathForBrow(.right).stroke()
         
         
         // Then we go to the Main.storyboard
